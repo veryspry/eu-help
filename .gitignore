@@ -4,5 +4,6 @@
 .env
 # Credential Dir
 /.credentials
-credentials.json
+.google-credentials.json
+.google-token.json
 token.json

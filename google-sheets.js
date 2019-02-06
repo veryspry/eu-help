@@ -1,13 +1,16 @@
 const fs = require("fs");
 const readline = require("readline");
+const http = require("http");
+const url = require("url");
 const { google } = require("googleapis");
+const opn = require("opn");
+const destroyer = require("server-destroy");
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
-// The file token.json stores the user's access and refresh tokens, and is
-// created automatically when the authorization flow completes for the first
-// time.
-const TOKEN_PATH = "token.json";
+// The file token.json stores the user's access and refresh tokens, and is created automatically when the authorization flow completes for the first time.
+const TOKEN_PATH = ".google-token.json";
+const GOOGLE_CREDENTIALS = ".google-credentials.json";
 
 /**
  * @param {Object} options of form:
@@ -16,7 +19,7 @@ const TOKEN_PATH = "token.json";
 
 const writeToSheet = options => {
   // Load client secrets from a local file.
-  fs.readFile("credentials.json", (err, content) => {
+  fs.readFile(GOOGLE_CREDENTIALS, (err, content) => {
     if (err) return console.log("Error loading client secret file:", err);
     // Authorize a client with credentials, then call the Google Sheets API.
     //   authorize(JSON.parse(content), readFromSheet, null);
@@ -38,12 +41,14 @@ const authorize = (credentials, callback, options) => {
     client_secret,
     redirect_uris[0]
   );
+
   // Check if we have previously stored a token.
   fs.readFile(TOKEN_PATH, (err, token) => {
     if (err) return getNewToken(oAuth2Client, callback);
     oAuth2Client.setCredentials(JSON.parse(token));
     callback(oAuth2Client, options);
   });
+  return;
 };
 
 /**
@@ -51,17 +56,21 @@ const authorize = (credentials, callback, options) => {
  * execute the given callback with the authorized OAuth2 client.
  * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
  * @param {getEventsCallback} callback The callback for the authorized client.
+ * @param {Object} options Object of options to pass to the callback
  */
-const getNewToken = (oAuth2Client, callback) => {
+
+const getNewToken = (oAuth2Client, callback, options) => {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: "offline",
     scope: SCOPES
   });
+
   console.log("Authorize this app by visiting this url:", authUrl);
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
   });
+
   rl.question("Enter the code from that page here: ", code => {
     rl.close();
     oAuth2Client.getToken(code, (err, token) => {
@@ -76,9 +85,10 @@ const getNewToken = (oAuth2Client, callback) => {
         if (err) console.error(err);
         console.log("Token stored to", TOKEN_PATH);
       });
-      callback(oAuth2Client);
+      callback(oAuth2Client, options);
     });
   });
+  return;
 };
 
 /**
@@ -105,6 +115,7 @@ const read = auth => {
       }
     }
   );
+  return;
 };
 
 const write = (auth, options) => {
@@ -113,7 +124,7 @@ const write = (auth, options) => {
   sheets.spreadsheets.values.append(
     {
       spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
-      range: "Sheet1",
+      range: "Sheet1!B2",
       valueInputOption: "USER_ENTERED",
       includeValuesInResponse: true,
       insertDataOption: "INSERT_ROWS",
@@ -121,9 +132,10 @@ const write = (auth, options) => {
     },
     (err, res) => {
       if (err) return console.log("The API returned an error: " + err);
-      console.log(JSON.stringify(res, null, 2));
+      //   console.log(JSON.stringify(res, null, 2));
     }
   );
+  return;
 };
 
 module.exports = { writeToSheet };
