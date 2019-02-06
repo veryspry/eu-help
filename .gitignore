@@ -1,6 +1,11 @@
 # dependencies
 /node_modules
-
+# Environment Variables
 .env
-
+# Credential Dir
+/.credentials
+.google-credentials.json
+.google-token.json
+token.json
 yarn.lock
+package-lock.json

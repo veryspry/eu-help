@@ -2,12 +2,9 @@ const express = require("express");
 const router = express.Router();
 const qs = require("qs");
 const axios = require("axios");
-const composeMessage = require("../utils/compose-message");
-
-router.get("/", (req, res) => {
-  console.log("req:", req.body);
-  res.send("testing...");
-});
+const postMessage = require("../utils/compose-message");
+const getUser = require("../utils/get-user");
+const { writeToSheet } = require("../google-sheets");
 
 // Post route for slash command
 router.post("/eu-help", (req, res) => {
@@ -18,23 +15,21 @@ router.post("/eu-help", (req, res) => {
     trigger_id,
     response_url,
     dialog: JSON.stringify({
-      callback_id: "ticket_submit",
-      title: "Testing...",
+      callback_id: "help_request",
+      title: "Submit a help request",
       submit_label: "Request",
       elements: [
         {
-          label: "Title",
+          label: "Summary",
+          name: "summary",
           type: "text",
-          name: "title",
-          value: text,
           hint: "30 second summary of the problem"
         },
         {
-          label: "Email Address",
-          name: "email",
-          type: "text",
-          subtype: "email",
-          placeholder: "you@example.com"
+          label: "Description",
+          name: "description",
+          type: "textarea",
+          hint: "A thorough description of the problem"
         }
       ]
     })
@@ -43,7 +38,7 @@ router.post("/eu-help", (req, res) => {
   axios
     .post(`${process.env.SLACK_API_URL}/dialog.open`, qs.stringify(dialog))
     .then(data => {
-      res.send("success");
+      res.send("");
     })
     .catch(err => {
       res.send("Failed to open dialog:", err);
@@ -51,24 +46,66 @@ router.post("/eu-help", (req, res) => {
 });
 
 // POST route for dialog submit
-router.post("/help/submit", (req, res) => {
+router.post("/help/submit", async (req, res) => {
   const {
     response_url,
+    user: { id: userID },
     channel: { id: channelID },
-    submission: { title }
+    submission: { summary, description }
   } = JSON.parse(req.body.payload);
   // TODO: Implement error handling / user verification before sending back response of 200
   res.send("");
+
+  let user;
+  try {
+    user = await getUser(userID);
+    console.log("outside", user);
+  } catch (err) {
+    console.log("error getting user", err);
+  }
 
   const message = {
     token: process.env.REACT_ACCESS_TOKEN,
     channel: channelID,
     as_user: true,
     link_names: true,
-    text: title
+    text: "TODO: update with formatted message from dialog submission"
   };
 
-  return composeMessage({ channelID, message });
+  const sheetData = {
+    name: user.real_name,
+    summary,
+    description
+  };
+
+  // const sheetOptions = {
+  //   rows: {
+  //     values: [[null, title, email]]
+  //   }
+  // };
+  // writeToSheet(sheetOptions);
+
+  postMessage({ channelID, message });
+
+  axios
+    .post(process.env.ZAPIER_WEBHOOK_URL, sheetData)
+    .catch(err => console.log("Error POSTing to Zapier webhook", err));
+
+  return;
+});
+
+// POST route for slack webhook
+router.post("/google-sheets", (req, res) => {
+  const { token, challenge, type } = req.body;
+  res.send(challenge);
+
+  axios
+    .post(process.env.GOOGLE_SCRIPT_URL, {})
+    .then(data => {
+      console.log("script data", data);
+      res.send("success");
+    })
+    .catch(err => console.log("error running google scripts", err));
 });
 
 module.exports = router;
