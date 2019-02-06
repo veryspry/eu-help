@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-const composeMessage = ({ channelID, message }) => {
+const postMessage = ({ channelID, message }) => {
   axios({
     method: "post",
     url: `${process.env.SLACK_API_URL}/chat.postMessage`,
@@ -19,4 +19,4 @@ const composeMessage = ({ channelID, message }) => {
     });
 };
 
-module.exports = composeMessage;
+module.exports = postMessage;

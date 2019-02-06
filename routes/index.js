@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const qs = require("qs");
 const axios = require("axios");
-const composeMessage = require("../utils/compose-message");
+const postMessage = require("../utils/compose-message");
+const { writeToSheet } = require("../google-sheets");
 
 router.get("/", (req, res) => {
   console.log("req:", req.body);
@@ -55,7 +56,7 @@ router.post("/help/submit", (req, res) => {
   const {
     response_url,
     channel: { id: channelID },
-    submission: { title }
+    submission: { title, email }
   } = JSON.parse(req.body.payload);
   // TODO: Implement error handling / user verification before sending back response of 200
   res.send("");
@@ -68,7 +69,15 @@ router.post("/help/submit", (req, res) => {
     text: title
   };
 
-  return composeMessage({ channelID, message });
+  const sheetOptions = {
+    rows: {
+      values: [[title, email]]
+    }
+  };
+
+  postMessage({ channelID, message });
+  writeToSheet(sheetOptions);
+  return;
 });
 
 module.exports = router;
