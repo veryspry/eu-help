@@ -1,5 +1,8 @@
 # dependencies
 /node_modules
-
+# Environment Variables
+.env
+# Credential Dir
 /.credentials
 credentials.json
+token.json
