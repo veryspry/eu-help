@@ -1,0 +1,37 @@
+{
+  "name": "veryspry-server",
+  "version": "1.0.0",
+  "description": "server for personal website, https://veryspry.com",
+  "main": "index.js",
+  "repository": "https://github.com/veryspry/vs-server",
+  "author": "Matt Ehlinger",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "start": "node ./index.js",
+    "watch": "npx nodemon ./index.js"
+  },
+  "dependencies": {
+    "apollo-cache-inmemory": "^1.1.0",
+    "apollo-client": "^2.0.3",
+    "apollo-link": "^1.0.3",
+    "apollo-link-http": "^1.2.0",
+    "aws-appsync": "^1.0.0",
+    "aws-sdk": "^2.141.0",
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "dotenv": "^6.2.0",
+    "es6-promise": "^4.1.1",
+    "express": "^4.16.4",
+    "graphql": "^0.11.7",
+    "graphql-tag": "^2.5.0",
+    "isomorphic-fetch": "^2.2.1",
+    "morgan": "^1.9.1",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "ws": "^3.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.9"
+  }
+}
