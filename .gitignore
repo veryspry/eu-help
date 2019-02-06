@@ -7,3 +7,5 @@
 .google-credentials.json
 .google-token.json
 token.json
+yarn.lock
+package-lock.json
