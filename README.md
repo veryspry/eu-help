@@ -6,8 +6,13 @@
 2. in the project directory `touch .env`
 3. add the following to `.env`: (Filling in the slack access token and signing secret with the appropriate values)
    ```
-   SLACK_ACCESS_TOKEN=
-   SLACK_SIGNING_SECRET=
+   SLACK_ACCESS_TOKEN=<Your token>
+   SLACK_SIGNING_SECRET=<You signing secret>
    SLACK_API_URL="https://slack.com/api"
+   ZAPIER_WEBHOOK_URL=<You Zapier webhook token>
    ```
-4. Fire up the project in watch mode with `yarn watch` or `npm run watch`
+4. Fire up the project in watch mode with `yarn dev` or `npm run dev`
+
+### Production Notes
+
+The app is hosted at <https://eu-help.herokuapp.com/>
