@@ -59,7 +59,6 @@ router.post("/help/submit", async (req, res) => {
   let user;
   try {
     user = await getUser(userID);
-    console.log("outside", user);
   } catch (err) {
     console.log("error getting user", err);
   }
@@ -72,12 +71,6 @@ router.post("/help/submit", async (req, res) => {
     text: "TODO: update with formatted message from dialog submission"
   };
 
-  const sheetData = {
-    name: user.real_name,
-    summary,
-    description
-  };
-
   // const sheetOptions = {
   //   rows: {
   //     values: [[null, title, email]]
@@ -86,6 +79,13 @@ router.post("/help/submit", async (req, res) => {
   // writeToSheet(sheetOptions);
 
   postMessage({ channelID, message });
+
+  // TODO: Update formatting data that gets written to Google sheet
+  const sheetData = {
+    name: user.real_name,
+    summary,
+    description
+  };
 
   axios
     .post(process.env.ZAPIER_WEBHOOK_URL, sheetData)
@@ -102,7 +102,6 @@ router.post("/google-sheets", (req, res) => {
   axios
     .post(process.env.GOOGLE_SCRIPT_URL, {})
     .then(data => {
-      console.log("script data", data);
       res.send("success");
     })
     .catch(err => console.log("error running google scripts", err));
