@@ -36,4 +36,6 @@ app.post("*", (req, res) => {
 });
 
 // Server
-app.listen(port, () => console.log(`Server is listening on port ${port}`));
+app.listen(process.env.PORT || port, () =>
+  console.log(`Server is listening on port ${port}`)
+);
