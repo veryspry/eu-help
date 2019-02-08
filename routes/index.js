@@ -54,6 +54,7 @@ router.post("/help/submit", async (req, res) => {
     submission: { summary, description }
   } = JSON.parse(req.body.payload);
   // TODO: Implement error handling / user verification before sending back response of 200
+  // Slack requires a response within 3 seconds or it discards the dialog submit process
   res.send("");
 
   let user;
