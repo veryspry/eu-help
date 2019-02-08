@@ -15,6 +15,14 @@ const GOOGLE_CREDENTIALS = ".google-credentials.json";
 /**
  * @param {Object} options of form:
  *  { rows: { values: [["A4 - test", "B4 - test", "C4 - test"]] } }
+
+To use this function: 
+const sheetOptions = {
+    rows: {
+      values: [[null, title, email]]
+    }
+  };
+  writeToSheet(sheetOptions);
  */
 
 const writeToSheet = options => {
