@@ -38,4 +38,4 @@ const htmlEncoder = str =>
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
 
-module.exports = postMessage;
+module.exports = { postMessage, composeMessage };
