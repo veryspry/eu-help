@@ -13,7 +13,7 @@ const postMessage = async messageDetails => {
         Authorization: `Bearer ${process.env.SLACK_ACCESS_TOKEN}`,
         "Content-type": "application/json"
       },
-      data: JSON.stringify(message)
+      data: JSON.stringify(messageDetails)
     });
     return "Success";
   } catch (err) {
