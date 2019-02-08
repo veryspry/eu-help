@@ -1,10 +1,10 @@
 const axios = require("axios");
 
 /**
- * 
+ *
  * @param {object} messageDetails Takes a channelID to post to and a messageDetails object to send
  */
-const postMessage = async (messageDetails) => {
+const postMessage = async messageDetails => {
   try {
     await axios({
       method: "post",
@@ -26,13 +26,16 @@ const postMessage = async (messageDetails) => {
  * @param {str} description string with message description
  * @param {str} summary string with message summary
  */
-const composeMessage = ({ summary, description }) => {  
+const composeMessage = ({ summary, description }) => {
   const title = "New team help question.";
-  const formattedStr = title + "\n" summary + "\n" + description
-  return htmlEncoder(formattedStr);
-}
+  return htmlEncoder(title + "\n" + summary + "\n" + description);
+};
 
 // Slack requires some characters to be sent HTML encoded
-const htmlEncoder = str => return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const htmlEncoder = str =>
+  str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 
 module.exports = postMessage;
