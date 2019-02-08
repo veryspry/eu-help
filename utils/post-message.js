@@ -28,7 +28,8 @@ const postMessage = async (messageDetails) => {
  */
 const composeMessage = ({ summary, description }) => {  
   const title = "New team help question.";
-  return htmlEncoder(title + "\n" summary + "\n" + description);
+  const formattedStr = title + "\n" summary + "\n" + description
+  return htmlEncoder(formattedStr);
 }
 
 // Slack requires some characters to be sent HTML encoded
