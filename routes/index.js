@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 const qs = require("qs");
 const axios = require("axios");
-const postMessage = require("../utils/compose-message");
+const titleize = require("underscore.string/titleize");
+const { postMessage, composeMessage } = require("../utils/post-message");
 const getUser = require("../utils/get-user");
-const { writeToSheet } = require("../google-sheets");
 
 // Post route for slash command
 router.post("/eu-help", (req, res) => {
@@ -54,6 +54,7 @@ router.post("/help/submit", async (req, res) => {
     submission: { summary, description }
   } = JSON.parse(req.body.payload);
   // TODO: Implement error handling / user verification before sending back response of 200
+  // Slack requires a response within 3 seconds or it discards the dialog submit process
   res.send("");
 
   let user;
@@ -63,26 +64,19 @@ router.post("/help/submit", async (req, res) => {
     console.log("error getting user", err);
   }
 
-  const message = {
+  const messageDetails = {
     token: process.env.REACT_ACCESS_TOKEN,
     channel: channelID,
     as_user: true,
     link_names: true,
-    text: "TODO: update with formatted message from dialog submission"
+    text: composeMessage({ summary, description })
   };
 
-  // const sheetOptions = {
-  //   rows: {
-  //     values: [[null, title, email]]
-  //   }
-  // };
-  // writeToSheet(sheetOptions);
-
-  postMessage({ channelID, message });
+  postMessage(messageDetails);
 
   // TODO: Update formatting data that gets written to Google sheet
   const sheetData = {
-    name: user.real_name,
+    name: titleize(user.real_name),
     summary,
     description
   };
