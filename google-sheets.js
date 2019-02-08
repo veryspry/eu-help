@@ -132,7 +132,7 @@ const write = (auth, options) => {
     },
     (err, res) => {
       if (err) return console.log("The API returned an error: " + err);
-      //   console.log(JSON.stringify(res, null, 2));
+      console.log(JSON.stringify(res, null, 2));
     }
   );
   return;
