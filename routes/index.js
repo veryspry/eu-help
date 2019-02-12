@@ -127,11 +127,12 @@ router.post("/interactive-components", async (req, res) => {
   if (callback_id === "interactive_message_1") {
     res.status(200);
 
-    console.log("MESSAGE", req.body.payload);
-
-    const urls = JSON.stringify(
+    const filteredURLS = JSON.stringify(
       original_message.attachments.filter(
-        ({ callback_id }) => callback_id != "interactive_message_1"
+        ({ callback_id }) =>
+          callback_id === "app_url" ||
+          callback_id === "admin_url" ||
+          callback_id === "zendesk_url"
       )
     );
 
@@ -140,7 +141,7 @@ router.post("/interactive-components", async (req, res) => {
       trigger_id: trigger_id,
       response_url: req.body.response_url,
       dialog: JSON.stringify({
-        state: urls,
+        state: filteredURLS,
         callback_id: "help_request_section_2",
         title: "Submit a help request",
         submit_label: "Request",
@@ -167,6 +168,8 @@ router.post("/interactive-components", async (req, res) => {
       admin_url: null,
       zendesk_url: null
     };
+
+    console.log("STATE", state);
 
     // Get URLS from first dialog
     JSON.parse(state).map(({ callback_id, text }) => {
