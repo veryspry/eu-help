@@ -26,10 +26,31 @@ const postMessage = async messageDetails => {
  * @param {str} description string with message description
  * @param {str} summary string with message summary
  */
-const composeMessage = ({ summary, description }) => {
-  const title = "New team help question.";
-  return htmlEncoder(title + "\n" + summary + "\n" + description);
+const composeMessageOld = ({
+  channelName,
+  appURL,
+  question,
+  thingsTried,
+  urgencyStatus,
+  stepsTaken,
+  username
+}) => {
+  let title = `@${username} has a question!`;
+
+  if (urgencyStatus === "true") title = "@here " + title;
+
+  const fields = [
+    title,
+    `*Channel*: ${channelName}`,
+    `*App URL:* ${appURL}`,
+    `*Question:* \n ${question}`,
+    `*Steps Taken:* \n ${stepsTaken}`
+  ];
+
+  return htmlEncoder(fields.join("\n"));
 };
+
+const composeMessage = fields => htmlEncoder(fields.join("\n"));
 
 // Slack requires some characters to be sent HTML encoded
 const htmlEncoder = str =>
